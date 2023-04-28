@@ -7,9 +7,9 @@ RUN apk update && apk add --no-cache \
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-WORKDIR /var/www/project
+WORKDIR /var/www/app
 
-COPY ./symfony /var/www/project/
+COPY ./app /var/www/app/
 
 RUN composer update --no-interaction --no-scripts --no-autoloader && composer clear-cache
 
