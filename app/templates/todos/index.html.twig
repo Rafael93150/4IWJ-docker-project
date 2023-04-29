@@ -3,9 +3,18 @@
 {% block body %}
     <h1>Todos</h1>
 
-    <ul>
-        {% for todo in todos %}
-            <li>{{ todo.name }}</li>
-        {% endfor %}
-    </ul>
+    <form method="POST">
+        <ul>
+            {% for todo in todos %}
+                <li>
+                    <label>
+                        <input type="checkbox" name="todos[]" value="{{ todo.id }}" {% if todo.completed %}checked{% endif %}>
+                        {{ todo.name }}
+                    </label>
+                </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Save</button>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('todo') }}">
+    </form>
 {% endblock %}
