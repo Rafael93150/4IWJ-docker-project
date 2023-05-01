@@ -5,47 +5,63 @@ namespace App\Controller;
 use App\Entity\Todo;
 use App\Form\TodoType;
 use App\Repository\TodoRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class TodoController extends AbstractController
 {
-    #[Route('/todo', name: 'app_todo')]
-    public function index(Request $request, TodoRepository $todoRepository, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createFormBuilder()
-            ->add('todos', \Symfony\Component\Form\Extension\Core\Type\CollectionType::class, [
-                'entry_type' => \Symfony\Component\Form\Extension\Core\Type\CheckboxType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'required' => false,
-                ],
-            ])
-            ->getForm();
+    private $entityManager; // déclarer la propriété privée $entityManager
 
+    public function __construct(EntityManagerInterface $entityManager) // injecter EntityManagerInterface dans le constructeur
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    #[Route('/', name: 'app_todos')]
+    public function index(Request $request, TodoRepository $todoRepository): Response
+    {
+        $todos = $todoRepository->findAll();
+
+        return $this->render('todos/index.html.twig', [
+            'todos' => $todos
+        ]);
+    }
+
+    #[Route('/new', name: 'app_new_todo')]
+    public function new(Request $request, TodoRepository $todoRepository): Response
+    {
+        $todo = new Todo();
+        $form = $this->createForm(TodoType::class, $todo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $todoIds = $data['todos'];
-            $todos = $todoRepository->findBy(['id' => $todoIds]);
+            $todoRepository->save($todo, true);
 
-            foreach ($todos as $todo) {
-                $todo->setCompleted(!$todo->isCompleted());
-                $entityManager->persist($todo);
-            }
-
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_todo');
+            return $this->redirectToRoute('app_todos', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('todos/index.html.twig', [
-            'todos' => $todoRepository->findAll(),
-            'form' => $form->createView(),
+        return $this->renderForm('todos/new.html.twig', [
+            'todo' => $todo,
+            'form' => $form,
         ]);
+    }
+
+    #[Route('/delete/{id}', name: 'app_delete_todo')]
+    public function delete(TodoRepository $todoRepository, int $id): Response
+    {
+        $todo = $todoRepository->find($id);
+
+        if (!$todo) {
+            throw $this->createNotFoundException('The todo does not exist');
+        }
+
+        $this->entityManager->remove($todo); // utiliser $entityManager pour supprimer le todo
+        $this->entityManager->flush(); // envoyer la requête à la base de données
+
+        return $this->redirectToRoute('app_todos');
     }
 }

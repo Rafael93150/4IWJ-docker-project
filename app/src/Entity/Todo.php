@@ -16,8 +16,8 @@ class Todo
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?bool $completed = null;
+    // #[ORM\Column]
+    // private ?bool $completed = null;
 
     public function getId(): ?int
     {
@@ -36,15 +36,15 @@ class Todo
         return $this;
     }
 
-    public function isCompleted(): ?bool
-    {
-        return $this->completed;
-    }
+    // public function isCompleted(): ?bool
+    // {
+    //     return $this->completed;
+    // }
 
-    public function setCompleted(bool $completed): self
-    {
-        $this->completed = $completed;
+    // public function setCompleted(bool $completed): self
+    // {
+    //     $this->completed = $completed;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
