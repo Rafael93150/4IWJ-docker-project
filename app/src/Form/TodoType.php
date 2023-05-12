@@ -14,19 +14,11 @@ class TodoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, [
-                'label' => false,
-                'attr' => [
-                    'placeholder' => 'Enter a new todo...'
-                ]
-            ]);
-        // ->add('completed', CheckboxType::class, [
-        //     'label' => 'Completed',
-        //     'required' => false,
-        //     'attr' => [
-        //         'class' => 'form-check-input'
-        //     ]
-        // ]);
+            ->add('title', TextType::class)
+            ->add('done', CheckboxType::class, [
+                'required' => false,
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

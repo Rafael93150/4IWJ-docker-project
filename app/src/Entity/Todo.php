@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TodoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TodoRepository::class)]
 class Todo
@@ -19,6 +20,25 @@ class Todo
     // #[ORM\Column]
     // private ?bool $completed = null;
 
+     /**
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     */
+    private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     */
+    private $title;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $done = false;
+
+    // Getters and setters
     public function getId(): ?int
     {
         return $this->id;

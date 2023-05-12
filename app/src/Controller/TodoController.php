@@ -32,23 +32,50 @@ class TodoController extends AbstractController
     }
 
     #[Route('/new', name: 'app_new_todo')]
-    public function new(Request $request, TodoRepository $todoRepository): Response
-    {
-        $todo = new Todo();
-        $form = $this->createForm(TodoType::class, $todo);
-        $form->handleRequest($request);
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $todo = new Todo();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $todoRepository->save($todo, true);
+    $form = $this->createForm(TodoType::class, $todo);
+    $form->handleRequest($request);
 
-            return $this->redirectToRoute('app_todos', [], Response::HTTP_SEE_OTHER);
-        }
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($todo);
 
-        return $this->renderForm('todos/new.html.twig', [
-            'todo' => $todo,
-            'form' => $form,
-        ]);
+        // Sauvegarde de la propriété "done"
+        $done = $form->get('done')->getData();
+        $todo->setDone($done);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('todo_index');
     }
+
+    return $this->render('todo/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+public function edit(Request $request, Todo $todo, EntityManagerInterface $entityManager): Response
+{
+    $form = $this->createForm(TodoType::class, $todo);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Sauvegarde de la propriété "done"
+        $done = $form->get('done')->getData();
+        $todo->setDone($done);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('todo_index');
+    }
+
+    return $this->render('todo/edit.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
 
     #[Route('/delete/{id}', name: 'app_delete_todo')]
     public function delete(TodoRepository $todoRepository, int $id): Response
