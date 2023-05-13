@@ -9,20 +9,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TodoRepository::class)]
 class Todo
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    // #[ORM\Column]
-    // private ?bool $completed = null;
-
      /**
      * @ORM\Column(type="integer")
-     * @ORM\Id
+     * @ORM\Id()
      * @ORM\GeneratedValue
      */
     private $id;
@@ -44,27 +33,27 @@ class Todo
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): self
+    public function setTitle(string $title): self
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }
 
-    // public function isCompleted(): ?bool
-    // {
-    //     return $this->completed;
-    // }
+    public function isCompleted(): ?bool
+    {
+        return $this->done;
+    }
 
-    // public function setCompleted(bool $completed): self
-    // {
-    //     $this->completed = $completed;
+    public function setDone(bool $done): self
+    {
+        $this->done = $done;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 }
