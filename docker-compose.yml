@@ -2,9 +2,7 @@ version: "3"
 
 services:
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
+    image: rafaeltdp/postgres
     container_name: project-nginx
     volumes:
       - ./app:/var/www/app
@@ -15,8 +13,7 @@ services:
       - php
 
   php:
-    build:
-      dockerfile: ./php/Dockerfile
+    image: rafaeltdp/php
     container_name: project-php
     volumes:
       - ./app:/var/www/app
@@ -26,9 +23,7 @@ services:
       - postgres
 
   postgres:
-    build:
-      context: ./postgres
-      dockerfile: Dockerfile
+    image: rafaeltdp/postgres
     container_name: project-postgres
     environment:
       POSTGRES_DB: app
