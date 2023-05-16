@@ -35,7 +35,7 @@ services:
       - 5432:5432
 
   adminer:
-    image: adminer:4.8.1
+    image: rafaeltdp/adminer
     container_name: project-adminer
     ports:
       - 8081:8080
