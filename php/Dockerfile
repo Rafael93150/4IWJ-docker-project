@@ -11,8 +11,6 @@ WORKDIR /var/www/app
 
 COPY ./app /var/www/app/
 
-RUN composer update --no-interaction --no-autoloader && composer clear-cache
-
-RUN composer dump-autoload
+RUN composer update --no-interaction && composer clear-cache
 
 CMD ["php-fpm"]
