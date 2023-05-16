@@ -2,7 +2,7 @@ version: "3"
 
 services:
   nginx:
-    image: rafaeltdp/postgres
+    image: rafaeltdp/nginx
     container_name: project-nginx
     volumes:
       - ./app:/var/www/app
